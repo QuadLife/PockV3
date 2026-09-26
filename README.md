@@ -21,7 +21,9 @@
 ### Installation
 
 1. Téléchargez la dernière version, placez `PockV3.app` dans votre dossier `Applications` et ouvrez-la.
-2. Si macOS refuse de l'ouvrir (« développeur non identifié ») : clic droit sur l'app → **Ouvrir**, ou dans le Terminal : `xattr -d com.apple.quarantine /Applications/PockV3.app`.
+2. L'app n'étant pas notarisée, macOS peut afficher « Apple n'a pas pu vérifier que PockV3.app ne contient pas de logiciel malveillant » au premier lancement. Sur macOS récent, le clic droit → Ouvrir ne suffit plus ; deux solutions :
+   - **Réglages Système → Confidentialité et sécurité → section Sécurité → « Ouvrir quand même »**, ou
+   - dans le Terminal : `xattr -d com.apple.quarantine /Applications/PockV3.app` (avant le premier lancement).
 3. Si Pock n'apparaît pas dans la Touch Bar : **Réglages Système → Clavier**, réglez « La Touch Bar affiche : Commandes d'app ».
 4. Accordez la permission **Automatisation** pour Musique/Spotify quand elle est demandée (widget Now Playing).
 
@@ -84,8 +86,11 @@ Si certains widgets du Control Center (ex. volume +/−) ne fonctionnent pas, re
 ### Installation
 
 1. Download the latest build, move `PockV3.app` to your `Applications` folder and open it.
-2. If macOS refuses to open the app (unsigned developer), right-click the app → **Open**,
-   or run `xattr -d com.apple.quarantine /Applications/PockV3.app` in the Terminal.
+2. The app is not notarized, so macOS may show "Apple could not verify that PockV3.app
+   is free of malware" on first launch. On recent macOS, right-click → Open is no longer
+   enough; two options:
+   - **System Settings → Privacy & Security → Security section → "Open Anyway"**, or
+   - in the Terminal, before the first launch: `xattr -d com.apple.quarantine /Applications/PockV3.app`.
 3. If you don't see Pock in the Touch Bar, go to **System Settings → Keyboard** and set
    "Touch Bar shows: App Controls".
 4. Grant the **Automation** permission for Music/Spotify when asked (Now Playing widget).
