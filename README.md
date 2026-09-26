@@ -1,5 +1,5 @@
 <p align="center"><b>Pock v3</b></p>
-<p align="center">Fork maintenu de <a href="https://github.com/konstantintuev/PockV2">PockV2</a> (widgets Touch Bar pour macOS), avec des corrections pour les versions récentes de macOS.</p>
+<p align="center">Fork maintenu de <a href="https://github.com/konstantintuev/PockV2">PockV2</a> (widgets Touch Bar pour macOS), avec des améliorations pour les versions récentes de macOS.</p>
 
 ---
 
@@ -8,10 +8,10 @@
 ### Ce qui change par rapport à PockV2
 
 1. **La batterie passe en jaune en mode économie d'énergie**, comme dans la barre des menus de macOS.
-   L'état est lu via `pmset`, car le snapshot IOKit fourni par le système est throttlé à ~30 secondes pour les données qui ne déclenchent pas de notification.
-2. **Correction de l'icône en charge** : câble branché, la batterie affiche son vrai niveau de remplissage avec l'éclair, au lieu d'une batterie qui paraissait vide.
-3. **Le widget Now Playing fonctionne à nouveau sur les macOS récents** : le framework privé `MediaRemote` d'Apple ne répond plus aux apps tierces sur les versions récentes de macOS, donc Pock v3 lit les métadonnées d'Apple Music et Spotify via AppleScript (titre, artiste, pochette, et les contrôles lecture/pause/musique suivante-précédente).
-4. **Appuyez sur l'icône batterie pour basculer le mode économie d'énergie** on/off.
+   PockV2 ne le faisait pas. L'état est lu via `pmset` (toujours frais, contrairement au snapshot IOKit du système qui peut avoir jusqu'à ~30 secondes de retard) : le passage au jaune — et le retour au blanc — se fait en ~5 secondes au maximum, qu'il s'agisse du mode économie d'énergie ou du branchement/débranchement du câble.
+2. **Icône batterie en charge** : câble branché, la batterie affiche son niveau de remplissage réel avec l'éclair.
+3. **Appuyez sur l'icône batterie pour basculer le mode économie d'énergie** on/off.
+4. **Le widget Now Playing fonctionne à nouveau sur les macOS récents** : le framework privé `MediaRemote` d'Apple ne répond plus aux apps tierces sur les versions récentes de macOS, donc Pock v3 lit les métadonnées d'Apple Music et Spotify via AppleScript (titre, artiste, pochette, et les contrôles lecture/pause/musique suivante-précédente).
 
 ### Compatibilité
 
@@ -67,15 +67,17 @@ Si certains widgets du Control Center (ex. volume +/−) ne fonctionnent pas, re
 ### What changed vs. PockV2
 
 1. **The battery turns yellow in Low Power Mode**, like the macOS menu bar.
-   The state is read through `pmset`, because the IOKit power source snapshot the system
-   provides is throttled to ~30 seconds for data that does not fire a notification.
-2. **Fixed the charging icon**: while plugged in, the battery now shows its real fill
-   level with a lightning bolt, instead of an empty-looking battery.
-3. **Now Playing widget works again on recent macOS**: Apple's private `MediaRemote`
+   PockV2 didn't do that. The state is read through `pmset` (always fresh, unlike the
+   system's IOKit snapshot which can lag up to ~30 seconds): switching to yellow — and
+   back to white — takes at most ~5 seconds, whether Low Power Mode is toggled or the
+   charger is plugged/unplugged.
+2. **Charging icon**: while plugged in, the battery shows its real fill level with a
+   lightning bolt.
+3. **Tap the battery icon to toggle Low Power Mode** on/off.
+4. **Now Playing widget works again on recent macOS**: Apple's private `MediaRemote`
    framework no longer answers third-party apps on recent macOS versions, so Pock v3
    reads Apple Music and Spotify metadata through AppleScript instead (title, artist,
    artwork, and play/pause/next/previous controls included).
-4. **Tap the battery icon to toggle Low Power Mode** on/off.
 
 ### Compatibility
 
