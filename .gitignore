@@ -1,0 +1,14 @@
+# macOS
+.DS_Store
+
+# Xcode
+build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+
+# CocoaPods (regenerated with `pod install`; Podfile.lock is committed)
+Pods/
+
+# Claude Code local session data
+.claude/
