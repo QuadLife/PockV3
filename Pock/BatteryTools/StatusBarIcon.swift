@@ -39,24 +39,47 @@ internal struct StatusBarIcon {
             return cache.image
         }
 
+        let color = fillColor(forStatus: status, lowPowerMode: lowPowerMode)
+
         switch status {
         case let .charging(percentage):
             cache = BatteryImageCache(forStatus: status,
                                       lowPowerMode: lowPowerMode,
                                       withImage: chargingBatteryImage(forPercentage: Double(percentage),
-                                                                      lowPowerMode: lowPowerMode))
+                                                                      fillColor: color))
         case .chargedAndPlugged:
             cache = BatteryImageCache(forStatus: status,
                                       lowPowerMode: lowPowerMode,
-                                      withImage: batteryImage(named: .chargedAndPlugged, lowPowerMode: lowPowerMode))
+                                      withImage: batteryImage(named: .chargedAndPlugged, color: color))
         case let .discharging(percentage):
             cache = BatteryImageCache(forStatus: status,
                                       lowPowerMode: lowPowerMode,
                                       withImage: dischargingBatteryImage(forPercentage: Double(percentage),
-                                                                         lowPowerMode: lowPowerMode))
+                                                                         fillColor: color))
         }
 
         return cache?.image
+    }
+
+    ///  The fill color for the battery icon, mimicking the macOS menu bar:
+    ///  white while charging, green when fully charged, red at 10% or less on
+    ///  battery power — and yellow whenever Low Power Mode is active.
+    ///
+    ///  - parameter status: The BatteryState for the status the battery is currently in.
+    ///  - parameter lowPowerMode: Whether Low Power Mode is currently active.
+    ///  - returns: The color to draw the battery fill with.
+    private func fillColor(forStatus status: BatteryState, lowPowerMode: Bool) -> NSColor {
+        if lowPowerMode {
+            return .systemYellow
+        }
+        switch status {
+        case .chargedAndPlugged:
+            return .systemGreen
+        case .charging:
+            return .white
+        case let .discharging(percentage):
+            return percentage <= 10 ? .systemRed : .white
+        }
     }
 
     ///  Draws a battery icon for the given BatteryError.
@@ -77,11 +100,9 @@ internal struct StatusBarIcon {
     ///  Draws a battery icon based on the battery's current percentage.
     ///
     ///  - parameter percentage:  The current percentage of the battery.
-    ///  - parameter lowPowerMode: Whether Low Power Mode is active (colors the icon yellow).
+    ///  - parameter fillColor:   The color to draw the outline, caps and fill with.
     ///  - returns: A battery icon for the supplied percentage.
-    private func dischargingBatteryImage(forPercentage percentage: Double, lowPowerMode: Bool) -> NSImage? {
-        let fillColor: NSColor = lowPowerMode ? .systemYellow : .white
-
+    private func dischargingBatteryImage(forPercentage percentage: Double, fillColor: NSColor) -> NSImage? {
         guard let batteryOutline = batteryImage(named: .outline),
               let capacityCapLeft = batteryImage(named: .left),
               let capacityCapRight = batteryImage(named: .right),
@@ -99,33 +120,30 @@ internal struct StatusBarIcon {
         // NSImage#drawThreePartImage glitchets when the width of the capacity bar drops
         // below the combined width of startCap and endCap.
         if drawingRect.width < (2 * capacityFill.size.width) {
-            return batteryImage(named: .lowBattery, lowPowerMode: lowPowerMode)
+            return batteryImage(named: .lowBattery, color: fillColor)
         }
 
-        let outline: NSImage = lowPowerMode ? batteryOutline.tint(color: fillColor) : batteryOutline
-        if lowPowerMode {
-            outline.isTemplate = false
-        }
-        let startCap: NSImage = lowPowerMode ? capacityCapLeft.tint(color: fillColor) : capacityCapLeft
-        let fill: NSImage     = lowPowerMode ? capacityFill.tint(color: fillColor) : capacityFill
-        let endCap: NSImage   = lowPowerMode ? capacityCapRight.tint(color: fillColor) : capacityCapRight
+        // Flatten every part to an explicit color: a plain copy of a template image
+        // rasterizes with the dark label color and becomes invisible on the Touch Bar.
+        let outline: NSImage = batteryOutline.tint(color: fillColor)
+        let startCap: NSImage = capacityCapLeft.tint(color: fillColor)
+        let fill: NSImage     = capacityFill.tint(color: fillColor)
+        let endCap: NSImage   = capacityCapRight.tint(color: fillColor)
 
         return outline.drawThreePartImage(withStartCap: startCap,
                                           fill: fill,
                                           endCap: endCap,
                                           inFrame: drawingRect)
     }
-    
+
     ///  Draws a battery icon with the fill at the battery's current percentage
     ///  and the charging symbol overlaid, as shown while the power cable is
     ///  plugged in.
     ///
     ///  - parameter percentage:  The current percentage of the battery.
-    ///  - parameter lowPowerMode: Whether Low Power Mode is active (colors the icon yellow).
+    ///  - parameter fillColor:   The color to draw the outline, caps and fill with.
     ///  - returns: A charging battery icon for the supplied percentage.
-    private func chargingBatteryImage(forPercentage percentage: Double, lowPowerMode: Bool) -> NSImage? {
-        let fillColor: NSColor = lowPowerMode ? .systemYellow : .white
-
+    private func chargingBatteryImage(forPercentage percentage: Double, fillColor: NSColor) -> NSImage? {
         guard let batteryOutline = batteryImage(named: .outline),
               let capacityCapLeft = batteryImage(named: .left),
               let capacityCapRight = batteryImage(named: .right),
@@ -143,7 +161,7 @@ internal struct StatusBarIcon {
         // NSImage#drawThreePartImage glitchets when the width of the capacity bar drops
         // below the combined width of startCap and endCap.
         if drawingRect.width < (2 * capacityFill.size.width) {
-            return batteryImage(named: .lowBattery, lowPowerMode: lowPowerMode)
+            return batteryImage(named: .lowBattery, color: fillColor)
         }
 
         // Flatten every part to an explicit color: a plain copy of a template image
@@ -155,9 +173,11 @@ internal struct StatusBarIcon {
 
         outline.lockFocus()
         NSDrawThreePartImage(drawingRect, startCap, fill, endCap, false, .copy, 1, false)
-        // Overlay the charging symbol in black, so it stays visible on top of the fill.
+        // Overlay the charging symbol in purple, so it stays visible both on top of
+        // the fill and over the black Touch Bar background where the battery is
+        // less than half full.
         if let chargingSymbol = batteryImage(named: .chargingSymbol) {
-            let symbol = chargingSymbol.tint(color: .black)
+            let symbol = chargingSymbol.tint(color: .systemPurple)
             symbol.draw(in: NSRect(x: (outline.size.width - symbol.size.width) / 2,
                                    y: (outline.size.height - symbol.size.height) / 2,
                                    width: symbol.size.width,
@@ -171,13 +191,13 @@ internal struct StatusBarIcon {
     ///  Returns the image object associated with the specified name as template.
     ///
     ///  - parameter name: The name of an image in the app bundle.
-    ///  - parameter lowPowerMode: Whether Low Power Mode is active (tints the image yellow).
+    ///  - parameter color: An optional color to flatten the template image with.
     ///  - returns: An image object associated with the specified name as template.
-    private func batteryImage(named name: BatteryImage, lowPowerMode: Bool = false) -> NSImage? {
+    private func batteryImage(named name: BatteryImage, color: NSColor? = nil) -> NSImage? {
         guard let img = NSImage(named: name.rawValue) else { return nil }
         img.isTemplate = true
-        if lowPowerMode {
-            return img.tint(color: .systemYellow)
+        if let color = color {
+            return img.tint(color: color)
         }
 
         return img

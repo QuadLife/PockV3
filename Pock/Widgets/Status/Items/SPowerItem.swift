@@ -17,7 +17,7 @@ struct SPowerStatus {
 class SPowerItem: StatusItem, ClickListener {
     
     /// Core
-    private var refreshTimer: Timer?
+    private var refreshSource: DispatchSourceTimer?
     private var powerStatus: SPowerStatus = SPowerStatus(isCharging: false, currentValue: 0)
     private var shouldShowBatteryIcon: Bool {
         return Defaults[.shouldShowBatteryIcon]
@@ -72,19 +72,26 @@ class SPowerItem: StatusItem, ClickListener {
     }
 
     func didUnload() {
-        refreshTimer?.invalidate()
-        refreshTimer = nil
+        refreshSource?.cancel()
+        refreshSource = nil
         NotificationCenter.default.removeObserver(self)
         NSWorkspace.shared.notificationCenter.removeObserver(self)
         battery.closeServiceConnection()
     }
 
-    ///  Periodic fallback refresh, in case Low Power Mode toggles do not post power source notifications.
+    ///  Periodic fallback refresh, so the icon follows the battery level as it
+    ///  drains or charges — 1% lost must drop the drawing by 1%. A GCD timer on
+    ///  the main queue is used instead of `Timer`, which only fires while its
+    ///  run loop runs in the mode it was scheduled for.
     private func startRefreshTimer() {
-        refreshTimer?.invalidate()
-        refreshTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { [weak self] _ in
+        refreshSource?.cancel()
+        let source = DispatchSource.makeTimerSource(queue: .main)
+        source.schedule(deadline: .now() + 5.0, repeating: 5.0)
+        source.setEventHandler { [weak self] in
             self?.setBatteryStatus(self?.battery)
         }
+        source.resume()
+        refreshSource = source
     }
     
     /// Registers the ApplicationController as observer for power source and user preference changes
@@ -160,8 +167,18 @@ class SPowerItem: StatusItem, ClickListener {
     ///
     ///  - parameter battery: The battery to render the status bar icon for.
     private func setBatteryStatus(_ battery: BatteryService?) {
+        // The power source notification and wake notification can be delivered on
+        // a background thread; all UI work must run on the main thread.
+        guard Thread.isMainThread else {
+            DispatchQueue.main.async { [weak self] in
+                self?.setBatteryStatus(battery)
+            }
+            return
+        }
         if let batteryState = battery?.state {
             if lastPercentage != batteryState {
+                NSLog("[Pock][Battery] Icon redraw: %@ (lowPowerMode: %@)",
+                      String(describing: batteryState), lowPowerMode ? "on" : "off")
                 setBatteryIcon(batteryState, lowPowerMode: lowPowerMode)
             }
             lastPercentage = batteryState
@@ -187,7 +204,7 @@ class SPowerItem: StatusItem, ClickListener {
         pmsetQueue.async { [weak self] in
             let isOn = SPowerItem.readLowPowerModeFromPMSet()
             DispatchQueue.main.async { [weak self] in
-                guard let self = self, self.refreshTimer != nil, isOn != self.lowPowerMode else { return }
+                guard let self = self, self.refreshSource != nil, isOn != self.lowPowerMode else { return }
                 NSLog("[Pock][Battery] Low Power Mode changed to %d (pmset)", isOn ? 1 : 0)
                 self.lowPowerMode = isOn
                 if let batteryState = self.battery?.state {

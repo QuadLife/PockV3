@@ -29,11 +29,14 @@ final class BatteryService {
     var state: BatteryState? {
         guard
             let plugged    = isPlugged,
-            let charged    = isCharged,
             let percentage = percentage else {
                 return nil
         }
-        if charged && plugged {
+        /// The battery can sit at 100% for several minutes in the "finishing
+        /// charge" phase while `FullyCharged` is still false (the macOS 27 menu
+        /// bar icon stays white through that phase). Show it as charged as soon
+        /// as it reaches 100% on AC power.
+        if plugged && percentage >= 100 {
             return .chargedAndPlugged
         }
         if plugged {
@@ -84,7 +87,15 @@ final class BatteryService {
     }
 
     ///  The current percentage, based on the current charge and the maximum capacity.
+    ///  Computed from the IORegistry, which is always fresh — unlike the IOPS snapshot,
+    ///  which the system can throttle, leaving the drawn fill level behind the real
+    ///  percentage.
     var percentage: Int? {
+        if let charge = charge, let capacity = capacity, capacity > 0 {
+            let percent = (Double(charge) / Double(capacity) * 100).rounded()
+            return min(100, max(0, Int(percent)))
+        }
+        // Fall back to the (possibly stale) IOPS snapshot.
         return getPowerSourceProperty(forKey: .percentage) as? Int
     }
 
