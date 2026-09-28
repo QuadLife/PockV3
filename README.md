@@ -67,7 +67,12 @@ Puis compilez le schéma `PockV3` (cible de déploiement : macOS 10.13+).
 
 ### Résolution de problèmes
 
-Si certains widgets du Control Center (ex. volume +/−) ne fonctionnent pas, retirez l'app des autorisations Accessibilité et Enregistrement d'écran dans Réglages Système, puis ajoutez-la à nouveau. Si ça ne suffit pas : `sudo tccutil reset All` dans le Terminal, redémarrez, puis accordez à nouveau les permissions nécessaires.
+- **Le menu contextuel du Dock (clic droit / appui long) ne fonctionne pas** — en particulier après une mise à jour de Pock alors que la case « PockV3.app » semble déjà cochée dans les réglages : l'autorisation Accessibilité est périmée. Réinitialisez-la puis re-accordez-la :
+  ```bash
+  sudo tccutil reset Accessibility ch.quadlife.pockv3
+  ```
+  puis relancez Pock et acceptez à nouveau la permission quand elle est demandée.
+- Si certains widgets du Control Center (ex. volume +/−) ne fonctionnent pas, retirez l'app des autorisations Accessibilité et Enregistrement d'écran dans Réglages Système, puis ajoutez-la à nouveau. Si ça ne suffit pas : `sudo tccutil reset All` dans le Terminal, redémarrez, puis accordez à nouveau les permissions nécessaires.
 
 ---
 
@@ -165,10 +170,17 @@ Then build the `PockV3` scheme (deployment target: macOS 10.13+).
 
 ### Issue resolving
 
-If some Control Center widgets (e.g. volume up/down) don't work, remove the app from
-Accessibility and Screen Recording in System Settings and add it again. If it still
-doesn't work, run `sudo tccutil reset All` in the Terminal, restart, then grant the
-needed permissions again.
+- **The Dock context menu (right-click / long press) doesn't work** — especially after
+  updating Pock while the "PockV3.app" checkbox already appears enabled in System
+  Settings: the Accessibility authorization is stale. Reset it, then grant it again:
+  ```bash
+  sudo tccutil reset Accessibility ch.quadlife.pockv3
+  ```
+  then relaunch Pock and accept the permission when asked again.
+- If some Control Center widgets (e.g. volume up/down) don't work, remove the app from
+  Accessibility and Screen Recording in System Settings and add it again. If it still
+  doesn't work, run `sudo tccutil reset All` in the Terminal, restart, then grant the
+  needed permissions again.
 
 ---
 
