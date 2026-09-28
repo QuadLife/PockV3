@@ -568,8 +568,8 @@ final class DockMenuHelper {
 
     private static func children(of element: AXUIElement) -> [AXUIElement] {
         var value: CFTypeRef?
-        guard AXUIElementCopyAttributeValue(element, kAXChildrenAttribute as CFString, &value) == .success,
-              let array = value as? [AXUIElement] else {
+        let error = AXUIElementCopyAttributeValue(element, kAXChildrenAttribute as CFString, &value)
+        guard error == .success, let array = value as? [AXUIElement] else {
             return []
         }
         return array
