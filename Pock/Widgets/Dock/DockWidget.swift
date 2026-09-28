@@ -108,9 +108,11 @@ class DockWidget: NSObject, PKWidget {
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(reloadDockScrubberLayout), name: .shouldReloadDockLayout, object: nil)
         /// Monitor the gesture/touch event family only — a catch-all mask makes
         /// AppKit route internal events (`.appKitDefined`, …) through the local
-        /// monitor, which is unsupported and crashes.
+        /// monitor, which is unsupported and crashes. Raw bit 37 is
+        /// `NSEventTypeDirectTouch`; raw bits 11/12 are KeyUp/FlagsChanged and
+        /// must NOT be monitored: `allTouches()` raises for such events.
         var touchMask: NSEvent.EventTypeMask = [.gesture, .beginGesture, .endGesture, .magnify, .swipe, .rotate, .smartMagnify, .pressure]
-        touchMask.formUnion(NSEvent.EventTypeMask(rawValue: (1 << 37) | (1 << 11) | (1 << 12)))
+        touchMask.formUnion(NSEvent.EventTypeMask(rawValue: 1 << 37))
         touchEventMonitor = NSEvent.addLocalMonitorForEvents(matching: touchMask, handler: { [weak self] event in
             self?.handleTouch(event)
             return event
@@ -341,6 +343,10 @@ extension DockWidget: NSScrubberDelegate {
 
     private func handleTouch(_ event: NSEvent) {
         guard Defaults[.dockContextMenuEnabled] else { return }
+        /// `allTouches()` raises an exception for events that are not
+        /// gesture/touch events (e.g. `FlagsChanged`), so filter them out.
+        let touchTypes: [NSEvent.EventType] = [.gesture, .beginGesture, .endGesture, .magnify, .swipe, .rotate, .smartMagnify, .pressure, .directTouch]
+        guard touchTypes.contains(event.type) else { return }
         guard let touch = event.allTouches().first else { return }
         /// Only Touch Bar touches: the event's window must be the Touch Bar window.
         if let someItemView = cachedItemViews.values.first, let touchBarWindow = someItemView.window {
