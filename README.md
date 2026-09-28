@@ -8,7 +8,7 @@
 ### Ce qui change par rapport à PockV2
 
 1. **La batterie passe en jaune en mode économie d'énergie**, comme dans la barre des menus de macOS.
-   PockV2 ne le faisait pas. L'état est lu via `pmset` (toujours frais, contrairement au snapshot IOKit du système qui peut avoir jusqu'à ~30 secondes de retard) : le passage au jaune — et le retour au blanc — se fait en ~5 secondes au maximum, qu'il s'agisse du mode économie d'énergie ou du branchement/débranchement du câble.
+   L'état est lu via `pmset` (toujours frais, contrairement au snapshot IOKit du système qui peut avoir jusqu'à ~30 secondes de retard) : le passage au jaune — et le retour au blanc — se fait en ~5 secondes au maximum, qu'il s'agisse du mode économie d'énergie ou du branchement/débranchement du câble.
 2. **Icône batterie en charge** : câble branché, la batterie affiche son niveau de remplissage réel avec l'éclair.
 3. **Appuyez sur l'icône batterie pour basculer le mode économie d'énergie** on/off.
 4. **Le widget Now Playing fonctionne à nouveau sur les macOS récents** : le framework privé `MediaRemote` d'Apple ne répond plus aux apps tierces sur les versions récentes de macOS, donc Pock v3 lit les métadonnées d'Apple Music et Spotify via AppleScript (titre, artiste, pochette, et les contrôles lecture/pause/musique suivante-précédente).
@@ -76,7 +76,7 @@ Si certains widgets du Control Center (ex. volume +/−) ne fonctionnent pas, re
 ### What changed vs. PockV2
 
 1. **The battery turns yellow in Low Power Mode**, like the macOS menu bar.
-   PockV2 didn't do that. The state is read through `pmset` (always fresh, unlike the
+   The state is read through `pmset` (always fresh, unlike the
    system's IOKit snapshot which can lag up to ~30 seconds): switching to yellow — and
    back to white — takes at most ~5 seconds, whether Low Power Mode is toggled or the
    charger is plugged/unplugged.
