@@ -47,6 +47,7 @@ final class GeneralPreferencePane: NSViewController, PreferencePane {
         super.viewDidLoad()
         self.view.superview?.wantsLayer = true
         self.view.wantsLayer = true
+        self.setupMouseSupportCheckboxes()
     }
     
     override func viewWillAppear() {
@@ -88,6 +89,66 @@ final class GeneralPreferencePane: NSViewController, PreferencePane {
     @IBAction private func didChangeEnableAutomaticUpdates(button: NSButton) {
         Defaults[.enableAutomaticUpdates] = button.state == .on
         NSWorkspace.shared.notificationCenter.post(name: .shouldEnableAutomaticUpdates, object: nil)
+    }
+
+    // MARK: - Mouse support
+
+    /// Mouse support checkboxes (added programmatically below the update button).
+    private var mouseSupportCheckbox:     NSButton?
+    private var showTrackingAreaCheckbox: NSButton?
+    private var dockContextMenuCheckbox:  NSButton?
+
+    private func setupMouseSupportCheckboxes() {
+        let mouseCheckbox        = NSButton(checkboxWithTitle: "Enable mouse support".localized,              target: self, action: #selector(didChangeMouseSupportValue(button:)))
+        let trackingCheckbox     = NSButton(checkboxWithTitle: "Show tracking area".localized,               target: self, action: #selector(didChangeShowTrackingAreaValue(button:)))
+        let contextMenuCheckbox  = NSButton(checkboxWithTitle: "Dock context menu on right-click".localized, target: self, action: #selector(didChangeDockContextMenuValue(button:)))
+        self.mouseSupportCheckbox    = mouseCheckbox
+        self.showTrackingAreaCheckbox = trackingCheckbox
+        self.dockContextMenuCheckbox  = contextMenuCheckbox
+
+        let stackView = NSStackView(views: [mouseCheckbox, trackingCheckbox, contextMenuCheckbox])
+        stackView.orientation  = .vertical
+        stackView.alignment    = .leading
+        stackView.spacing      = 6
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(stackView)
+        NSLayoutConstraint.activate([
+            stackView.leadingAnchor.constraint(equalTo: self.enableAutomaticUpdates.leadingAnchor),
+            stackView.trailingAnchor.constraint(lessThanOrEqualTo: self.checkForUpdatesButton.trailingAnchor),
+            stackView.topAnchor.constraint(equalTo: self.checkForUpdatesButton.bottomAnchor, constant: 10),
+            self.view.bottomAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 16)
+        ])
+        /// The xib pins the update button to the view's bottom edge: release it,
+        /// the new checkboxes now extend the view downwards.
+        for constraint in self.view.constraints
+        where (constraint.secondItem as? NSView) == self.checkForUpdatesButton && constraint.firstAttribute == .bottom {
+            constraint.isActive = false
+        }
+        self.refreshMouseSupportCheckboxes()
+    }
+
+    private func refreshMouseSupportCheckboxes() {
+        self.mouseSupportCheckbox?.state      = Defaults[.mouseSupportEnabled]    ? .on : .off
+        self.showTrackingAreaCheckbox?.state  = Defaults[.showTrackingArea]       ? .on : .off
+        self.dockContextMenuCheckbox?.state   = Defaults[.dockContextMenuEnabled] ? .on : .off
+        let enabled                           = Defaults[.mouseSupportEnabled]
+        self.showTrackingAreaCheckbox?.isEnabled = enabled
+        self.dockContextMenuCheckbox?.isEnabled  = enabled
+    }
+
+    @objc private func didChangeMouseSupportValue(button: NSButton) {
+        Defaults[.mouseSupportEnabled] = button.state == .on
+        self.refreshMouseSupportCheckboxes()
+        NSWorkspace.shared.notificationCenter.post(name: .shouldReloadScreenEdgeController, object: nil)
+    }
+
+    @objc private func didChangeShowTrackingAreaValue(button: NSButton) {
+        Defaults[.showTrackingArea] = button.state == .on
+        NSWorkspace.shared.notificationCenter.post(name: .shouldReloadScreenEdgeController, object: nil)
+    }
+
+    @objc private func didChangeDockContextMenuValue(button: NSButton) {
+        Defaults[.dockContextMenuEnabled] = button.state == .on
     }
     
     @IBAction private func checkForUpdates(_ sender: NSButton) {

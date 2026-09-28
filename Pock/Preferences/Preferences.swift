@@ -23,6 +23,7 @@ extension Preferences.PaneIdentifier {
 extension NSNotification.Name {
     static let didChangeNotificationBadgeRefreshRate = NSNotification.Name("didSelectNotificationBadgeRefreshRate")
     static let shouldReloadPock                      = NSNotification.Name("shouldReloadPock")
+    static let shouldReloadScreenEdgeController      = NSNotification.Name("shouldReloadScreenEdgeController")
     static let shouldReloadStatusWidget              = NSNotification.Name("shouldReloadStatusWidget")
     static let shouldReloadControlCenterWidget       = NSNotification.Name("shouldReloadControlCenterWidget")
     static let shouldReloadDock                      = NSNotification.Name("shouldReloadDock")
@@ -83,6 +84,10 @@ enum NowPlayingWidgetStyle: String, Codable {
 extension Defaults.Keys {
     static let hideControlStrip                 = Defaults.Key<Bool>("hideControlStrip",       default: true)
     static let enableAutomaticUpdates           = Defaults.Key<Bool>("enableAutomaticUpdates", default: false)
+    /// Mouse support (cursor on Touch Bar when the mouse reaches the bottom screen edge)
+    static let mouseSupportEnabled              = Defaults.Key<Bool>("mouseSupportEnabled",    default: true)
+    static let showTrackingArea                 = Defaults.Key<Bool>("showTrackingArea",       default: false)
+    static let dockContextMenuEnabled           = Defaults.Key<Bool>("dockContextMenuEnabled", default: true)
     /// Dock widget
     static let notificationBadgeRefreshInterval = Defaults.Key<NotificationBadgeRefreshRateKeys>("notificationBadgeRefreshInterval", default: .tenSeconds)
     static let appExposeSettings                = Defaults.Key<AppExposeSettings>("appExposeSettings", default: .ifNeeded)

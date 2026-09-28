@@ -36,9 +36,15 @@ class PKWidgetViewController: NSViewController {
 }
 
 class PKWidgetTouchBarItem: NSCustomTouchBarItem {
-    
+
     private var widget: PKWidget?
-    
+
+    /// The widget's screen-edge mouse delegate, if it handles mouse events itself
+    /// (e.g. the Dock widget, for click/scroll/right-click support).
+    var screenEdgeMouseDelegate: PKScreenEdgeMouseDelegate? {
+        return widget as? PKScreenEdgeMouseDelegate
+    }
+
     override var customizationLabel: String! {
         get {
             return widget?.customizationLabel

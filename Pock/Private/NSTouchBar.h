@@ -35,3 +35,9 @@ extern void DFRSystemModalShowsCloseBoxWhenFrontMost(BOOL);
 @property (readwrite, strong, nullable) __kindof NSViewController *viewController;
 @property (readwrite, copy, null_resettable) NSString *customizationLabel;
 @end
+
+// MARK: NSFunctionRow (private, macOS < 27 — looked up at runtime via NSClassFromString,
+// the class no longer exists on macOS 27 where the Touch Bar view is found through
+// the window of the Touch Bar display instead)
+// (kept out of the header on purpose: referencing the class statically crashes
+// at startup on macOS 27)

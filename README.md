@@ -13,10 +13,19 @@
 3. **Appuyez sur l'icône batterie pour basculer le mode économie d'énergie** on/off.
 4. **Le widget Now Playing fonctionne à nouveau sur les macOS récents** : le framework privé `MediaRemote` d'Apple ne répond plus aux apps tierces sur les versions récentes de macOS, donc Pock v3 lit les métadonnées d'Apple Music et Spotify via AppleScript (titre, artiste, pochette, et les contrôles lecture/pause/musique suivante-précédente).
 
+### Nouveautés de la v3.1
+
+1. **Éclair de charge violet** : visible sur tous les fonds — le noir de la Touch Bar quand la batterie est moins qu'à moitié remplie, comme sur le remplissage vert ou jaune.
+2. **Le dessin du niveau de charge suit la batterie en continu** : le pourcentage est lu directement dans le registre IOKit (toujours frais), donc le dessin monte et descend pourcentage par pourcentage, sans plus avoir à brancher/débrancher le câble ou basculer le mode économie d'énergie pour rafraîchir l'affichage.
+3. **Couleurs de remplissage comme la barre des menus en mode normal** : blanc pendant la charge, **vert dès 100 %** (même pendant la phase de « finishing charge », où l'icône de la barre des menus de macOS 27 reste blanche), **rouge à 10 % ou moins** sur batterie. En mode économie d'énergie, le remplissage reste jaune en permanence (inchangé).
+4. **Souris dans la Touch Bar** : quand la souris touche le bord bas de l'écran, un curseur apparaît sur la Touch Bar. Clic gauche = lancer l'app sous le curseur, molette/défilement = faire défiler le Dock, glisser-déposer = déposer un fichier sur une icône. Un **clic droit sur une icône du Dock** (ou un **appui long ~1,5 s avec le doigt**) affiche le **vrai menu contextuel du Dock de macOS**, au-dessus de l'icône en question. Tout cela se règle dans les préférences de Pock (onglet Général : activation de la souris, visualisation de la zone de détection, menu contextuel).
+5. **Numéro de version corrigé** : 0.8.4 (jamais mis à jour depuis le projet d'origine) → 3.1.0.
+
 ### Compatibilité
 
-- ✅ Testé sur **macOS 27.0** sur un **MacBook Pro M2** (13 pouces, avec Touch Bar).
-- macOS 27.0 est sorti il y a une semaine seulement : pas encore testé sur une version plus récente, ni sur une version antérieure à macOS 27.0 (ça devrait fonctionner, mais sans garantie).
+- ✅ Testé sur **macOS 27.0** sur un **MacBook Pro M2** (13 pouces, avec Touch Bar) — souris, tactile et appui long inclus.
+- Les versions antérieures à macOS 27 **n'ont pas pu être validées** (l'appareil de test est déjà sous macOS 27). macOS 27 a modifié des fonctions internes de la Touch Bar ; le code conserve le chemin d'accès historique pour les versions antérieures, mais sans garantie.
+- macOS 27.0 est sorti il y a une semaine seulement : pas encore testé sur une version plus récente (27.0.1 / 27.1 à venir).
 
 ### Installation
 
@@ -79,11 +88,36 @@ Si certains widgets du Control Center (ex. volume +/−) ne fonctionnent pas, re
    reads Apple Music and Spotify metadata through AppleScript instead (title, artist,
    artwork, and play/pause/next/previous controls included).
 
+### What's new in v3.1
+
+1. **Purple charging bolt**: visible on every background — the black of the Touch Bar
+   when the battery is less than half full, as well as on the green or yellow fill.
+2. **The fill level drawing now tracks the battery continuously**: the percentage is
+   read straight from the IOKit registry (always fresh), so the drawing climbs and
+   falls percentage by percentage — no more plugging/unplugging the charger or
+   toggling Low Power Mode just to refresh the display.
+3. **Fill colors like the menu bar in normal mode**: white while charging, **green as
+   soon as it reaches 100%** (even during the "finishing charge" phase, where the
+   macOS 27 menu bar icon stays white), **red at 10% or less** on battery power. In
+   Low Power Mode the fill stays yellow all the time (unchanged).
+4. **Mouse support in the Touch Bar**: when the mouse reaches the bottom edge of the
+   screen, a cursor appears on the Touch Bar. Left click = launch the app under the
+   cursor, scroll = browse the Dock, drag & drop = drop a file onto an icon. A
+   **right-click on a Dock icon** (or a **long press of ~1.5 s with a finger**) shows
+   the **authentic macOS Dock context menu**, above the icon in question. All of this
+   is configurable in Pock's preferences (General tab: mouse support on/off, show the
+   tracking area, context menu on/off).
+5. **Version number fixed**: 0.8.4 (never updated since the original project) → 3.1.0.
+
 ### Compatibility
 
-- ✅ Tested on **macOS 27.0** on a **MacBook Pro M2** (13-inch, with Touch Bar).
-- macOS 27.0 was released only a week ago: not yet tested on a newer version, nor on a
-  version older than macOS 27.0 (it should work, but no guarantee).
+- ✅ Tested on **macOS 27.0** on a **MacBook Pro M2** (13-inch, with Touch Bar) —
+  including mouse support, touch and long press.
+- Versions older than macOS 27 **could not be validated** (the test device is already
+  on macOS 27). macOS 27 changed Touch Bar internals; the code keeps the legacy path
+  for older versions, but without guarantee.
+- macOS 27.0 was released only a week ago: not yet tested on a newer version
+  (27.0.1 / 27.1 to come).
 
 ### Installation
 

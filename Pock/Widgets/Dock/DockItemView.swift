@@ -10,10 +10,22 @@ import Foundation
 import SnapKit
 
 class DockItemView: NSScrubberItemView {
-    
+
     /// Core
     private static let kBounceAnimationKey: String = "kBounceAnimationKey"
     private var isAnimating: Bool = false
+
+    /// Long-press (context menu)
+    /// The dock item currently displayed by this view (used for the long-press menu).
+    var dockItem: DockItem?
+    /// Whether the long-press menu was shown for the current touch
+    /// (consumed by `DockWidget` to skip the launch on selection).
+    var longPressMenuShown: Bool = false
+    /// Whether a finger is currently pressing this icon.
+    var touchInProgress: Bool = false
+    /// Invoked when the finger leaves the icon without the long-press menu
+    /// being shown (used by `DockWidget` to launch a deferred selection).
+    var onTouchEndWithoutMenu: (() -> Void)?
     
     /// UI
     private var contentView:    NSView!
@@ -133,7 +145,7 @@ class DockItemView: NSScrubberItemView {
         badgeView.layer?.opacity = hasBadge ? 1 : 0
     }
     public var hasBadge: Bool { return badgeView.layer?.opacity == 1 }
-    
+
 }
 
 extension DockItemView {

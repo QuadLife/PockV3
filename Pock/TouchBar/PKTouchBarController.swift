@@ -12,9 +12,19 @@ import Defaults
 class PKTouchBarController: NSObject, NSTouchBarDelegate {
     
     @IBOutlet var touchBar: NSTouchBar?
-    
-    private(set) var isVisible: Bool = false
-    
+
+    private(set) var isVisible: Bool = false {
+        didSet {
+            guard isVisible != oldValue else { return }
+            visibilityDidChange(isVisible)
+        }
+    }
+
+    /// Called whenever the Touch Bar controller becomes visible or hidden.
+    /// Override in subclasses (e.g. to show/hide the screen edge mouse tracker).
+    func visibilityDidChange(_ visible: Bool) {
+        /// override in subclasses.
+    }
     weak var navController: PKTouchBarNavController?
     
     var systemTrayItem:           NSCustomTouchBarItem?      { return nil }
