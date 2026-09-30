@@ -20,6 +20,7 @@
 3. **Couleurs de remplissage comme la barre des menus en mode normal** : blanc pendant la charge, **vert dès 100 %** (même pendant la phase de « finishing charge », où l'icône de la barre des menus de macOS 27 reste blanche), **rouge à 10 % ou moins** sur batterie. En mode économie d'énergie, le remplissage reste jaune en permanence (inchangé).
 4. **Souris dans la Touch Bar** : quand la souris touche le bord bas de l'écran, un curseur apparaît sur la Touch Bar. Clic gauche = lancer l'app sous le curseur, molette/défilement = faire défiler le Dock, glisser-déposer = déposer un fichier sur une icône. Un **clic droit sur une icône du Dock** (ou un **appui long ~1,5 s avec le doigt**) affiche le **vrai menu contextuel du Dock de macOS**, au-dessus de l'icône en question. Tout cela se règle dans les préférences de Pock (onglet Général : activation de la souris, visualisation de la zone de détection, menu contextuel).
 5. **Numéro de version corrigé** : 0.8.4 (jamais mis à jour depuis le projet d'origine) → 3.1.0.
+6. **Heure avec les secondes (option)** : une case « Show seconds » dans les réglages du widget Status fait défiler l'horloge en HH:mm:ss.
 
 ### Compatibilité
 
@@ -113,6 +114,7 @@ Puis compilez le schéma `PockV3` (cible de déploiement : macOS 10.13+).
    is configurable in Pock's preferences (General tab: mouse support on/off, show the
    tracking area, context menu on/off).
 5. **Version number fixed**: 0.8.4 (never updated since the original project) → 3.1.0.
+6. **Clock with seconds (optional)**: a "Show seconds" checkbox in the Status widget preferences ticks the clock to HH:mm:ss.
 
 ### Compatibility
 

@@ -107,6 +107,7 @@ extension Defaults.Keys {
     static let shouldShowBatteryTime            = Defaults.Key<Bool>("shouldShowBatteryTime", default: false)
     static let shouldShowDateItem               = Defaults.Key<Bool>("shouldShowDateItem",          default: true)
     static let timeFormatTextField              = Defaults.Key<String>("timeFormatTextField",       default: "EE dd MMM HH:mm")
+    static let shouldShowClockSeconds           = Defaults.Key<Bool>("shouldShowClockSeconds",      default: false)
     static let shouldShowSpotlightItem          = Defaults.Key<Bool>("shouldShowSpotlightItem",     default: true)
     /// Control Center widget
     static let shouldShowSleepItem              = Defaults.Key<Bool>("shouldShowSleepItem",             default: false)

@@ -16,6 +16,7 @@
                 <outlet property="showLangItem" destination="gmR-5Q-Ai1" id="Hkq-3i-tkV"/>
                 <outlet property="showPowerItem" destination="P4F-Aq-avh" id="GQA-CU-urZ"/>
                 <outlet property="showWifiItem" destination="2QA-fb-vdC" id="wvf-Iq-9Ka"/>
+                <outlet property="clockSecondsCheckbox" destination="sL8-Md-Kc7" id="xK9-r6-Q3v"/>
                 <outlet property="timeFormatTextField" destination="fXD-5d-Dqf" id="wQw-2w-3mb"/>
                 <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
             </connections>
@@ -146,6 +147,16 @@
                                 <real value="3.4028234663852886e+38"/>
                             </customSpacing>
                         </stackView>
+                        <button verticalHuggingPriority="750" tag="5" translatesAutoresizingMaskIntoConstraints="NO" id="sL8-Md-Kc7">
+                            <rect key="frame" x="18" y="55" width="130" height="18"/>
+                            <buttonCell key="cell" type="check" title="Show seconds" bezelStyle="regularSquare" imagePosition="left" inset="2" id="s8W-B8-4gV">
+                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="didChangeCheckboxValue:" target="-2" id="1g8-Pp-XqF"/>
+                            </connections>
+                        </button>
                         <button verticalHuggingPriority="750" tag="4" translatesAutoresizingMaskIntoConstraints="NO" id="Deb-iR-B7p">
                             <rect key="frame" x="-2" y="-1" width="152" height="18"/>
                             <buttonCell key="cell" type="check" title="Make items clickable" bezelStyle="regularSquare" imagePosition="left" inset="2" id="5fN-Lf-VT4">

@@ -21,6 +21,7 @@ class StatusWidgetPreferencePane: NSViewController, NSTextFieldDelegate, Prefere
     @IBOutlet weak var showDateItem:                NSButton!
     @IBOutlet weak var showLangItem: NSButton!
     @IBOutlet weak var makeClickable: NSButton!
+    @IBOutlet weak var clockSecondsCheckbox:       NSButton!
     // @IBOutlet weak var showSpotlightItem:           NSButton!
     @IBOutlet weak var timeFormatTextField:         NSTextField!
     
@@ -54,6 +55,7 @@ class StatusWidgetPreferencePane: NSViewController, NSTextFieldDelegate, Prefere
         self.showBatteryTimeItem.state       = Defaults[.shouldShowBatteryTime]          ? .on : .off
         self.showLangItem.state       = Defaults[.shouldShowLangItem]          ? .on : .off
         self.makeClickable.state       = Defaults[.shouldMakeClickable]          ? .on : .off
+        self.clockSecondsCheckbox.state = Defaults[.shouldShowClockSeconds]      ? .on : .off
         // self.showSpotlightItem.state         = defaults[.shouldShowSpotlightItem]     ? .on : .off
     }
     
@@ -76,6 +78,8 @@ class StatusWidgetPreferencePane: NSViewController, NSTextFieldDelegate, Prefere
             key = .shouldShowDateItem
         case 4:
             key = .shouldMakeClickable
+        case 5:
+            key = .shouldShowClockSeconds
         /* case 4:
             key = .shouldShowSpotlightItem */
         default:

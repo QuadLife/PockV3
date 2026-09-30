@@ -59,8 +59,21 @@ class SClockItem: StatusItem, ClickListener {
     }
     
     func reload() {
+        var format = Defaults[.timeFormatTextField]
+        if Defaults[.shouldShowClockSeconds], !format.contains("ss") {
+            /// Insert ":ss" ("seconds") after the minutes token, e.g.
+            /// "EE dd MMM HH:mm" → "EE dd MMM HH:mm:ss".
+            let nsFormat = (format as NSString)
+            let range = nsFormat.range(of: "mm", options: .backwards)
+            if range.location != NSNotFound {
+                format = nsFormat.replacingCharacters(in: NSRange(location: range.location + range.length, length: 0),
+                                                      with: ":ss")
+            }else {
+                format.append("ss")
+            }
+        }
         let formatter = DateFormatter()
-        formatter.dateFormat = Defaults[.timeFormatTextField]
+        formatter.dateFormat = format
         formatter.locale = Locale(identifier: Locale.preferredLanguages.first ?? "en_US_POSIX")
         let tempLabel = formatter.string(from: Date())
         if tempLabel != clockLabel?.stringValue {
