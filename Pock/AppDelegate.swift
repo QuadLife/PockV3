@@ -43,12 +43,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
         NSApp.isAutomaticCustomizeTouchBarMenuItemEnabled = true
-        
-        /// Initialize Crashlytics
-        if isProd {
-            UserDefaults.standard.register(defaults: ["NSApplicationCrashOnExceptions": true])
-            //Fabric.with([Crashlytics.self])
-        }
+
+        /// NOTE: do NOT register "NSApplicationCrashOnExceptions" here. It was a
+        /// leftover of the removed Crashlytics integration and made the app die
+        /// on any uncaught AppKit exception — including macOS 27's internal
+        /// exception in `+[NSFunctionRow markActiveFunctionRowsAsDimmed:]`
+        /// (the Touch Bar dimming machinery), which is a system bug Pock only
+        /// witnesses. With the default behavior, that exception is logged and
+        /// the app keeps running.
         
         /// Check for accessibility (needed for badges to work)
         self.checkAccessibility()
